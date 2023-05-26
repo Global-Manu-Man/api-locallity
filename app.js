@@ -11,7 +11,7 @@ const hpp = require('hpp')
 const cors = require('cors')
 const xss = require('xss-clean')
 const bodyParser = require('body-parser')
-const upload = multer()
+const upload = multer();
 // Security module implement
 
 app.use(cors())
@@ -20,6 +20,7 @@ app.use(hpp())
 app.use(xss())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
+app.use(upload.any());
 
 const limiter = rateLimit({
     windowMs: 15*60*1000,

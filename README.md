@@ -1,2 +1,2 @@
-# api-publication
-API that registers a publication of a party room with all its information.
+# api-locallity
+api to register a local business

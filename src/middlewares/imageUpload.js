@@ -27,7 +27,7 @@ const uploadImage = multer({
         }
     },
 
-}).array("image",8);
+}).array("images",8);
 
 const uploadToS3 = (fileData)=>{
     return new Promise((resolve,reject)=>{
@@ -52,4 +52,4 @@ const uploadToS3 = (fileData)=>{
     })
 }
 
-export default {uploadImage,uploadToS3};
+module.exports = uploadToS3;

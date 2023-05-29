@@ -14,7 +14,6 @@ exports.create=(request,response)=>{
    const price = request.body['price'];
    const manager = request.body['manager'];
    const description = request.body['description'];
-   //const event_classification = request.body['event_classification'];
    const capacity_people = request.body['capacity_people'];
    const address_1 = request.body['address_1'];
    const address_2 = request.body['address_2'];
@@ -53,7 +52,7 @@ exports.create=(request,response)=>{
    const startTime = startDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
    const endTime = endDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
    const schedule = startTime+"-"+endTime;
-   const created_at = Date.now();
+   const created_at = new Date();
 
 
         // Image
@@ -91,7 +90,8 @@ exports.create=(request,response)=>{
                 response.status(400).json({
                     code:400 ,
                     message:"Data Insert failed",
-                    error:err})
+                    error:err
+                })
 
             }
 
@@ -99,4 +99,58 @@ exports.create=(request,response)=>{
         })
 
    
+}
+
+exports.getItems=(req,res)=>{
+
+
+    const business_id = req.params.id;
+
+    const sql = `SELECT * FROM negocio WHERE business_id = "${business_id}"`
+    const img_sql = `SELECT * FROM images WHERE images_id = "${business_id}"`
+
+    db.query(sql,(err,data)=>{
+
+        if(err){
+
+            res.status(404).json({
+                code:404 ,
+                message:"Data Not Found",
+                error:err
+            })
+
+        }else if(data.length === 0){
+
+            res.status(404).json({message: "no record record found"})
+
+        }else{
+
+            db.query(img_sql,(err,images)=>{
+
+                if(err){
+                    
+                    res.status(404).json({
+                        code:404 ,
+                        message:"Data Not Found",
+                        error:err
+                    })
+                }
+
+                const imageUrls = images && images.length > 0 ? images.map((row) => row.image_url) : [];
+
+                    res.status(200).json({
+                        code:200 ,
+                        message:"Data Found",
+                        data:{
+                            business_details:data,
+                            images:imageUrls
+                        }
+                    })
+                
+
+            })
+
+        }
+    })
+
 }

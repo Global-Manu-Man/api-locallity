@@ -154,3 +154,68 @@ exports.getItems=(req,res)=>{
     })
 
 }
+
+exports.UpdateData=(req,res)=>{
+    
+   const business_id = req.params.id;
+
+   const name = request.body['name'];
+   const price = request.body['price'];
+   const manager = request.body['manager'];
+   const description = request.body['description'];
+   const capacity_people = request.body['capacity_people'];
+   const address_1 = request.body['address_1'];
+   const address_2 = request.body['address_2'];
+   const address_3 = request.body['address_3'];
+   const city = request.body['city'];
+   const state = request.body['state'];
+   const country = request.body['country'];
+   const postal_code = request.body['postal_code'];
+   const email = request.body['email'];
+   const cell_phone_number = request.body['cell_phone_number'];
+   const publication_likes = request.body['publication_likes'];
+   const questions = request.body['questions'];
+   const policies_terms = request.body['policies_terms'];
+   const delivery = request.body['delivery'];
+   const shipping = request.body['shipping'];
+   const bill  = request.body['bill'];
+   const antiquity = request.body['antiquity'];
+   const physical_store = request.body['physical_store'];
+   const online_store = request.body['online_store'];
+   const url_google = request.body['url_google'];
+   const business_days = request.body['business_days'];
+   const category = request.body['category'];
+   const subcategory = request.body['subcategory'];
+   const discount_code = request.body['discount_code'];
+   const latitude = request.body['latitude'];
+   const longitude = request.body['longitude'];
+   const accepts_credit_cards = request.body['accepts_credit_cards'];
+   const is_owner_verified = request.body['is_owner_verified'];
+   const start_date = request.body['start_date'];
+   const end_date = request.body['end_date'];
+   const language = request.body['language'];
+   const status = request.body['status'];
+   const social_networks = request.body['social_networks'];
+   const startDate = new Date(start_date);
+   const endDate = new Date(end_date);
+   const startTime = startDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+   const endTime = endDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+   const schedule = startTime+"-"+endTime;
+   const created_at = new Date();
+
+
+   const UpdateSql = `UPDATE negocio SET name='[value-3]',price='[value-4]',manager='[value-5]',description='[value-6]',address_1='[value-7]',address_2='[value-8]',address_3='[value-9]',city='[value-10]',state='[value-11]',country='[value-12]',postal_code='[value-13]',latitude='[value-14]',longitude='[value-15]',delivery='[value-16]',shipping='[value-17]',bill='[value-18]',antiquity='[value-19]',email='[value-20]',physical_store='[value-21]',online_store='[value-22]',url_google='[value-23]',cell_phone_number='[value-24]',business_days='[value-25]',category='[value-26]',subcategory='[value-27]',discount_code='[value-28]',publication_likes='[value-29]',questions='[value-30]',policies_terms='[value-31]',accepts_credit_cards='[value-32]',is_owner_verified='[value-33]',language='[value-34]',social_networks='[value-35]',status='[value-36]',start_date='[value-38]',end_date='[value-39]' WHERE business_id ="${business_id}"`
+
+   db.query(UpdateSql,(err,data)=>{
+
+
+       if(err){
+         // error
+
+       }else{
+        // data
+
+       }
+
+   })
+}

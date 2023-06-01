@@ -179,7 +179,7 @@ exports.UpdateData=(req,res)=>{
    const shipping = req.body['shipping'];
    const bill  = req.body['bill'];
    const antiquity = req.body['antiquity'];
-   const physical_store = req.body['physical_store'];req
+   const physical_store = req.body['physical_store'];
    const online_store = req.body['online_store'];
    const url_google = req.body['url_google'];
    const business_days = req.body['business_days'];
@@ -255,4 +255,33 @@ const UpdateSql = `UPDATE negocio SET
        }
 
    })
+}
+
+
+exports.deleteItem=(req,res)=>{
+
+    const business_id = req.params.id;
+
+    const deleteSql = `DELETE FROM negocio WHERE business_id = '${business_id}'`
+    const ImgDelSql = `DELETE FROM images WHERE images_id ='${business_id}'`
+
+
+    db.query(ImgDelSql,(err,data)=>{
+
+        if(err){
+
+            res.status(400).json({message:"Data Delete Failed",error:err})
+
+        }else{
+
+           db.query(deleteSql)
+           res.status(200).json({message:"Data Delete Successfully",error:data})
+        }
+
+    })
+
+
+
+
+
 }

@@ -2,6 +2,7 @@ const env =  require('dotenv').config()
 const multer = require('multer');
 const AWS = require('aws-sdk');
 
+
 const awsConfig = {
     
     accessKeyId:process.env.ACCESSKEYID, 
@@ -11,7 +12,6 @@ const awsConfig = {
 
 
 const s3 = new AWS.S3(awsConfig)
-
 
 const uploadImage = multer({
 
@@ -37,6 +37,7 @@ const uploadToS3 = (fileData)=>{
             Key:`${Date.now().toString()}.jpg`,
             Body: fileData
         }
+
 
         s3.upload(params,(err,data)=>{
 

@@ -3,6 +3,7 @@ const db = require('../database/db');
 const env =  require('dotenv').config()
 const multer = require('multer');
 const AWS = require('aws-sdk');
+
 const uploadToS3 = require('../middlewares/imageUpload');
 
 

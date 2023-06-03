@@ -5,6 +5,7 @@ const multer = require('multer');
 const AWS = require('aws-sdk');
 
 const uploadToS3 = require('../middlewares/imageUpload');
+const deleteFromS3 = require('../middlewares/imageUpload');
 
 
 exports.create=(request,response)=>{
@@ -67,7 +68,11 @@ exports.create=(request,response)=>{
                     const imgLocation = result.Location;
                   
                     const ImageSql = `INSERT INTO images(images_id, image_url) VALUES ("${business_id}","${imgLocation}")`;
-                    db.query(ImageSql)
+                    db.query(ImageSql,(err,data)=>{
+
+                        console.log(err);
+                        
+                    })
 
               })
             }
@@ -265,24 +270,70 @@ exports.deleteItem=(req,res)=>{
 
     const deleteSql = `DELETE FROM negocio WHERE business_id = '${business_id}'`
     const ImgDelSql = `DELETE FROM images WHERE images_id ='${business_id}'`
+    const imgSelect_sql = `SELECT * FROM images WHERE images_id = "${business_id}"`
+
+             db.query(imgSelect_sql,(err,images)=>{
+
+                images.map((img)=>{
+
+                    const imageUrlParts  = img.split('/')
+                    const imageKey = imageUrlParts[imageUrlParts.length - 1];
+                    deleteFromS3(imageKey);
+                     
+                })
+            })
+
+            db.query(ImgDelSql,(err,data)=>{
+
+                if(err){
+
+                    res.status(400).json({message:"Data Delete Failed",error:err})
+
+                }else{
+
+                db.query(deleteSql)
+                res.status(200).json({message:"Data Delete Successfully",error:data})
+                }
+
+            })
+
+}
+
+exports.deleteSingleImg=(req,res)=>{
 
 
-    db.query(ImgDelSql,(err,data)=>{
+    const id = req.params.id;
 
-        if(err){
+    const delSql = `DELETE FROM images WHERE id="${id}"`
+    const imgsql = `SELECT image_url FROM images WHERE id = "${id}"`
 
-            res.status(400).json({message:"Data Delete Failed",error:err})
+
+
+    db.query(imgsql,(err,images)=>{
+
+        if(images.length === 0){
+
+            res.status(404).json({message:"Invalid Image id",})
 
         }else{
 
-           db.query(deleteSql)
-           res.status(200).json({message:"Data Delete Successfully",error:data})
+            const imageUrl= images[0]['image_url']
+            const imageUrlParts = imageUrl.split('/') 
+            const imagekey = imageUrlParts[imageUrlParts.length -1]
+            deleteFromS3(imagekey);
+
+            db.query(delSql,(err,data)=>{
+
+                if(err){
+        
+                    res.status(400).json({message:"Image Delete Failed",error:err})
+        
+                }else{
+        
+                    res.status(200).json({message:"Image Delete Successfully",data:data})
+                }
+            })
         }
-
     })
-
-
-
-
-
 }
+

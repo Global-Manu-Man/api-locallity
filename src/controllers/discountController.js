@@ -9,6 +9,7 @@ exports.createCode=(req,res)=>{
     const description = req.body['description'];
     const date = new Date(req.body['date_validity']);
     const year = date.getFullYear().toString()
+    
     const month = (date.getMonth()+1).toString().padStart(2,0)
     const day = date.getDate().toString().padStart(2,0)
     const date_validity = `${year}-${month}-${day}`

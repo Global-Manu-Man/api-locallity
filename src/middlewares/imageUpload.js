@@ -43,7 +43,6 @@ const uploadToS3 = (fileData)=>{
 
             if(err){
 
-                console.log(err);
                 reject(err)
             }
             return resolve(data)
@@ -53,4 +52,29 @@ const uploadToS3 = (fileData)=>{
     })
 }
 
-module.exports = uploadToS3;
+
+const deleteFromS3 = (imageKey)=>{
+
+    const deleteParams = {
+        Bucket: 'locallity',
+        Key: imageKey,
+      };
+
+      s3.deleteObjects(deleteParams,(err,data)=>{
+
+        return new Promise((reject,resolve)=>{
+
+                if(err){
+
+                    reject(err)
+                }
+                return resolve(data)
+         
+            })
+
+        })
+        
+
+
+}
+module.exports = uploadToS3,deleteFromS3

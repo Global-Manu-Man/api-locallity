@@ -30,3 +30,25 @@ exports.createCode=(req,res)=>{
     })
 
 }
+
+exports.deleteCode=(req,res)=>{
+
+
+    const discount_code = req.params.code;
+    const deleteSql = `DELETE FROM discount WHERE discount_code = "${discount_code}"`
+    db.query(deleteSql,(err,data)=>{
+
+        if(err){
+
+            res.status(400).json({message:"delete failed",error:err})
+
+        }else{
+
+            res.status(200).json({message:"Discount Code Deleted successfully",error:data})
+
+
+        }
+
+    })
+
+}

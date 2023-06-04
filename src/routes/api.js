@@ -14,5 +14,6 @@ router.get("/locality/deleteOne/:id",localityController.deleteSingleImg);
 
 //discount 
 router.post("/discount",discountController.createCode)
+router.get("/discount/delete/:code",discountController.deleteCode)
 
 module.exports = router;

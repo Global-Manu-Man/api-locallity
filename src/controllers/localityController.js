@@ -54,7 +54,8 @@ exports.create=(request,response)=>{
    const startTime = startDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
    const endTime = endDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
    const schedule = startTime+"-"+endTime;
-   const created_at = new Date();
+   const now = new Date();
+   const created_at = now.toISOString().slice(0, 19).replace('T', ' ');
 
 
         // Image

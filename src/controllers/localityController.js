@@ -56,7 +56,8 @@ exports.create=(request,response)=>{
    const startTime = startDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
    const endTime = endDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
    const schedule = startTime+"-"+endTime;
-   const created_at = new Date();
+   const now = new Date();
+   const created_at = now.toISOString().slice(0, 19).replace('T', ' ');
 
 //    const sql = `INSERT INTO negocio (business_id, schedule, name, price, manager, description, address_1, address_2, address_3, city, state, country, postal_code,delivery, shipping, bill, antiquity, email, physical_store, online_store, url_google,business_age,municipality,cell_phone_number, business_days, category, subcategory, discount_code, publication_likes, questions, policies_terms, accepts_credit_cards, is_owner_verified,social_networks, status, created_at, start_date, end_date) VALUES ('${business_id}','${schedule}','${name}','${price}','${manager}','${description}','${address_1}','${address_2}','${address_3}','${city}','${state}','${country}','${postal_code}','${delivery}','${shipping}','${bill}','${antiquity}','${email}','${physical_store}','${online_store}','${url_google}','${business_age}','${municipality},'${cell_phone_number}','${business_days}','${category}','${subcategory}','${discount_code}','${publication_likes}','${questions}','${policies_terms}','${accepts_credit_cards}','${is_owner_verified}','${social_networks}','${status}','${created_at}','${start_date}','${end_date}')`;
 

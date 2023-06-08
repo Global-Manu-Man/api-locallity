@@ -2,18 +2,15 @@ const env =  require('dotenv').config()
 const multer = require('multer');
 const AWS = require('aws-sdk');
 
-
 const awsConfig = {
     
     accessKeyId:process.env.ACCESSKEYID, 
     secretAccessKey:process.env.SECRETACCESSKEY,
     region: process.env.REGION
+
 }
-
-
 const s3 = new AWS.S3(awsConfig)
-
-const uploadImage = multer({
+const uploadLogo = multer({
 
     limits: {
         fileSize: 1024 * 1024 * 10 // 10mb file size
@@ -27,17 +24,18 @@ const uploadImage = multer({
         }
     },
 
-}).array("images",8);
+}).single("logo");
 
-const uploadToS3 = (fileData)=>{
+
+const logoUploadToS3 = (fileData)=>{
+
     return new Promise((resolve,reject)=>{
 
         const params = {
-            Bucket:"locallity",
-            Key:`${Date.now().toString()}.jpg`,
+            Bucket:"locallity-logos",
+            Key:`${Date.now().toString()}.png`,
             Body: fileData
         }
-
 
         s3.upload(params,(err,data)=>{
 
@@ -52,30 +50,4 @@ const uploadToS3 = (fileData)=>{
     })
 }
 
-
-const deleteFromS3 = (imageKey)=>{
-
-    const deleteParams = {
-        Bucket: 'locallity',
-        Key: imageKey,
-      };
-
-      s3.deleteObjects(deleteParams,(err,data)=>{
-
-        return new Promise((reject,resolve)=>{
-
-                if(err){
-
-                    reject(err)
-                }
-                return resolve(data)
-         
-            })
-
-        })
-        
-
-
-}
-
-module.exports = uploadToS3,deleteFromS3
+module.exports = logoUploadToS3

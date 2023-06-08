@@ -3,9 +3,9 @@ const db = require('../database/db');
 const env =  require('dotenv').config()
 const multer = require('multer');
 const AWS = require('aws-sdk');
-
 const uploadToS3 = require('../middlewares/imageUpload');
 const deleteFromS3 = require('../middlewares/imageUpload');
+const logoUploadToS3 = require('../middlewares/logoUpload');
 
 
 exports.create=(request,response)=>{
@@ -36,6 +36,8 @@ exports.create=(request,response)=>{
    const physical_store = request.body['physical_store'];
    const online_store = request.body['online_store'];
    const url_google = request.body['url_google'];
+   const business_age = request.body['business_age'];
+   const municipality = request.body['municipality'];
    const business_days = request.body['business_days'];
    const category = request.body['category'];
    const subcategory = request.body['subcategory'];
@@ -56,7 +58,33 @@ exports.create=(request,response)=>{
    const schedule = startTime+"-"+endTime;
    const created_at = new Date();
 
+//    const sql = `INSERT INTO negocio (business_id, schedule, name, price, manager, description, address_1, address_2, address_3, city, state, country, postal_code,delivery, shipping, bill, antiquity, email, physical_store, online_store, url_google,business_age,municipality,cell_phone_number, business_days, category, subcategory, discount_code, publication_likes, questions, policies_terms, accepts_credit_cards, is_owner_verified,social_networks, status, created_at, start_date, end_date) VALUES ('${business_id}','${schedule}','${name}','${price}','${manager}','${description}','${address_1}','${address_2}','${address_3}','${city}','${state}','${country}','${postal_code}','${delivery}','${shipping}','${bill}','${antiquity}','${email}','${physical_store}','${online_store}','${url_google}','${business_age}','${municipality},'${cell_phone_number}','${business_days}','${category}','${subcategory}','${discount_code}','${publication_likes}','${questions}','${policies_terms}','${accepts_credit_cards}','${is_owner_verified}','${social_networks}','${status}','${created_at}','${start_date}','${end_date}')`;
 
+const sql = `INSERT INTO negocio(business_id, schedule, name, price, manager, description, address_1, address_2, address_3, city, state, country, postal_code, delivery, shipping, bill, antiquity, email, physical_store, online_store, url_google, business_age, municipality, cell_phone_number, business_days, category, subcategory, discount_code, publication_likes, questions,policies_terms, accepts_credit_cards, is_owner_verified, social_networks, status, start_date, end_date) VALUES ("${business_id}",'${schedule}','${name}','${price}','${manager}','${description}','${address_1}','${address_2}','${address_3}','${city}','${state}','${country}','${postal_code}','${delivery}','${shipping}','${bill}','${antiquity}','${email}','${physical_store}','${online_store}','${url_google}','${business_age}','${municipality}','${cell_phone_number}','${business_days}','${category}','${subcategory}','${discount_code}','${publication_likes}','${questions}','${policies_terms}','${accepts_credit_cards}','${is_owner_verified}','${social_networks}','${status}','${start_date}','${end_date}')`
+
+   db.query(sql, (err,data)=>{
+
+       if(data){
+
+           response.status(200).json({
+               code:200,
+               business_id:business_id,
+               message:"Data Inserted SuccessFully",})
+
+       }else{
+
+           response.status(400).json({
+               code:400 ,
+               message:"Data Insert failed",
+               error:err
+           })
+
+       }
+
+
+   })
+
+    // console.log(request);
         // Image
         if(request.files && request.files.length>0 ){
 
@@ -79,30 +107,41 @@ exports.create=(request,response)=>{
           
         }
 
+        // console.log(request.files);
+        const logo = request.files.find(file=> file.fieldname === 'logo')
 
-        const sql = `INSERT INTO negocio (business_id, schedule, name, price, manager, description, address_1, address_2, address_3, city, state, country, postal_code,latitude, longitude,delivery, shipping, bill, antiquity, email, physical_store, online_store, url_google, cell_phone_number, business_days, category, subcategory, discount_code, publication_likes, questions, policies_terms, accepts_credit_cards, is_owner_verified, language, social_networks, status, created_at, start_date, end_date) VALUES ('${business_id}','${schedule}','${name}','${price}','${manager}','${description}','${address_1}','${address_2}','${address_3}','${city}','${state}','${country}','${postal_code}','${latitude}','${longitude}','${delivery}','${shipping}','${bill}','${antiquity}','${email}','${physical_store}','${online_store}','${url_google}','${cell_phone_number}','${business_days}','${category}','${subcategory}','${discount_code}','${publication_likes}','${questions}','${policies_terms}','${accepts_credit_cards}','${is_owner_verified}','${language}','${social_networks}','${status}','${created_at}','${start_date}','${end_date}')`;
+        if(logo){
 
-        db.query(sql, (err,data)=>{
+            logoUploadToS3(logo.buffer)
 
-            if(data){
+            .then((result)=>{
+ 
+              const logo_url = result.Location
 
-                response.status(200).json({
-                    code:200,
-                    business_id:business_id,
-                    message:"Data Inserted SuccessFully",})
+              const logoSql = `INSERT INTO logos(logo_id,logo_url) VALUES ('${business_id}','${logo_url }')`
 
-            }else{
+              db.query(logoSql,(err,logo)=>{
 
-                response.status(400).json({
-                    code:400 ,
-                    message:"Data Insert failed",
-                    error:err
-                })
+                if(err){
 
-            }
+                    console.log(err)
+
+                }
+              })
+ 
+            })
+            .catch((err)=>{
+ 
+             console.log(err)
+ 
+            })
+ 
+ 
+      
+
+        }
 
 
-        })
 
    
 }

@@ -49,5 +49,29 @@ const logoUploadToS3 = (fileData)=>{
 
     })
 }
+const deleteLogoFromS3 = (logoKey)=>{
 
-module.exports = logoUploadToS3
+    const deleteParams = {
+        Bucket: 'locallity-logos',
+        Key: logoKey,
+      };
+
+      s3.deleteObjects(deleteParams,(err,data)=>{
+
+        return new Promise((reject,resolve)=>{
+
+                if(err){
+
+                    reject(err)
+                }
+                return resolve(data)
+         
+            })
+
+        })
+        
+
+
+}
+
+module.exports = logoUploadToS3,deleteLogoFromS3

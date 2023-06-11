@@ -6,6 +6,7 @@ const AWS = require('aws-sdk');
 const uploadToS3 = require('../middlewares/imageUpload');
 const deleteFromS3 = require('../middlewares/imageUpload');
 const logoUploadToS3 = require('../middlewares/logoUpload');
+const deleteLogoFromS3 = require('../middlewares//logoUpload');
 
 
 exports.create=(request,response)=>{
@@ -198,7 +199,7 @@ exports.getItems=(req,res)=>{
 }
 
 exports.UpdateData=(req,res)=>{
-    
+
     const business_id = req.body['business_id'];
     const selectSql = `SELECT * FROM negocio WHERE id_business = '${business_id}'`;
 
@@ -325,33 +326,91 @@ exports.UpdateData=(req,res)=>{
 exports.deleteItem=(req,res)=>{
 
     const business_id = req.params.id;
+    const deleteSql = `DELETE FROM negocio WHERE id_business = "${business_id}"`
+    const logoDelSql = `DELETE FROM logos WHERE id_business = "${business_id}"`
+    const imgDelSql = `DELETE FROM images WHERE id_business= "${business_id}"`
 
-    const deleteSql = `DELETE FROM negocio WHERE id_business = '${business_id}'`
-    const ImgDelSql = `DELETE FROM images WHERE id_business ='${business_id}'`
-    const imgSelect_sql = `SELECT * FROM images WHERE id_business = "${business_id}"`
 
-             db.query(imgSelect_sql,(err,images)=>{
+    const Select_sql = `SELECT * FROM negocio 
+    JOIN logos ON negocio.id_business = logos.id_business
+    JOIN images on negocio.id_business = images.id_business
+    WHERE negocio.id_business = "${business_id}"`
 
-                images.map((img)=>{
+             db.query(Select_sql,(err,data)=>{
 
-                    const imageUrlParts  = img.split('/')
-                    const imageKey = imageUrlParts[imageUrlParts.length - 1];
-                    deleteFromS3(imageKey);
-                     
-                })
-            })
+              if(err){
 
-            db.query(ImgDelSql,(err,data)=>{
+                res.status(500).json({ message: "Error occurred while checking ID existence", error: err });
 
-                if(err){
+              }else{
 
-                    res.status(400).json({message:"Data Delete Failed",error:err})
+                if(data.length === 0){
+
+                    res.status(404).json({ message: "ID not found" });
 
                 }else{
 
-                db.query(deleteSql)
-                res.status(200).json({message:"Data Delete Successfully",error:data})
+
+                    data.map((item)=>{
+
+                        const img = item['image_url'];
+                        const imageUrlParts  = img.split('/')
+                        const imageKey = imageUrlParts[imageUrlParts.length - 1];
+
+                        const logo_item = item['logo_url'];
+                        const logoUrlPart = logo_item.split('/')
+                        const logoKey = logoUrlPart[logoUrlPart.length-1]
+
+                        deleteFromS3(imageKey);
+                        deleteLogoFromS3(logoKey)
+
+                    })
+
+
+                    db.query(imgDelSql,(err,imgDel)=>{
+                        
+                        if(err){
+
+                            res.status(400).json({message:"Data Delete Failed",error:err})
+
+                        }else{
+
+                            db.query(logoDelSql,(err)=>{
+
+                                if(err){
+
+                                    res.status(400).json({message:"Data Delete Failed",error:err})
+                                    
+                                }else{
+
+                                    db.query(deleteSql,(err,data)=>{
+
+                                        if(err){
+                
+                                            res.status(400).json({message:"Data Delete Failed",error:err})
+                
+                                        }else{
+                            
+                                            res.status(200).json({message:"Data Delete Successfully"})
+                
+                                        }
+                
+                                    })
+
+                                }
+                            })
+            
+
+
+                        }
+                    })
+                    
+
+
                 }
+
+              }
+
 
             })
 
@@ -392,6 +451,50 @@ exports.deleteSingleImg=(req,res)=>{
                 }
             })
         }
+    })
+}
+exports.deleteSingleLogo=(req,res)=>{
+
+
+    const id = req.params.id;
+    const logoDelSql = `DELETE FROM logos WHERE id = "${id}"`
+    const SelectSql = `SELECT * FROM logos WHERE id = "${id}"`
+
+
+    db.query(SelectSql,(err,logo)=>{
+
+        if(err){
+
+            res.status(500).json({ message: "Error occurred while checking ID existence", error: err });
+
+        }else{
+
+            if(logo.length === 0){
+
+                res.status(404).json({message:"Invalid Image id",})
+    
+            }else{
+
+                const logo_item = logo[0]['logo_url'];
+                const logoUrlPart = logo_item.split('/')
+                const logoKey = logoUrlPart[logoUrlPart.length-1]
+                deleteLogoFromS3(logoKey)
+             
+                db.query(logoDelSql,(err,data)=>{
+    
+                    if(err){
+            
+                        res.status(400).json({message:"Logo Delete Failed",error:err})
+            
+                    }else{
+            
+                        res.status(200).json({message:"Logo Delete Successfully",data:data})
+                    }
+                })
+            }
+        }
+
+
     })
 }
 

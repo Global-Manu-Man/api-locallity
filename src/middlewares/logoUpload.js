@@ -59,6 +59,7 @@ const deleteLogoFromS3 = (logoKey)=>{
       s3.deleteObjects(deleteParams,(err,data)=>{
 
         return new Promise((reject,resolve)=>{
+        
 
                 if(err){
 

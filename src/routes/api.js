@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const localityController = require('../controllers/localityController');
 const discountController = require('../controllers/discountController');
+const filterController = require('../controllers/filterController');
 
 
 //Locality
@@ -13,6 +14,8 @@ router.get("/locality/delete/:id",localityController.deleteItem);
 router.get("/locality/deleteOne/:id",localityController.deleteSingleImg);
 router.get("/locality/logoDeleteOne/:id",localityController.deleteSingleLogo);
 
+// filtering
+router.get("/selectAll",filterController.selectAll);
 //discount 
 router.post("/discount",discountController.createCode)
 router.get("/discount/delete/:code",discountController.deleteCode)

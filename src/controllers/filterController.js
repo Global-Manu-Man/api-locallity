@@ -2,7 +2,7 @@ const db = require('../database/db');
 
 exports.selectAll = (req, res) => {
   const page = req.query.page || 1;
-  const limit = req.query.limit || 2; 
+  const limit = req.query.limit || 10; 
 
   const offset = (page - 1) * limit;
 
@@ -13,7 +13,7 @@ exports.selectAll = (req, res) => {
     FROM negocio
     LEFT JOIN images ON negocio.id_business = images.id_business
     LEFT JOIN logos ON negocio.id_business = logos.id_business
-    GROUP BY negocio.id_business
+    GROUP BY negocio.id_business, logos.logo_url
     LIMIT ${limit}
     OFFSET ${offset}
   `; 

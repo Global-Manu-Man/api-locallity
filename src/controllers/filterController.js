@@ -43,3 +43,35 @@ exports.selectAll = (req, res) => {
     });
   });
 };
+
+exports.searchBar=(req, res)=>{
+
+
+  const name = req.body['name'];
+  const searchSql = `SELECT * FROM negocio WHERE name LIKE '%${name}%'`;
+  db.query(searchSql,(err, data)=>{
+
+
+    if(err){
+
+      res.status(500).json({ message: 'Failed to retrieve data', error: err });
+
+    }else if(data.length === 0){
+
+      res.status(404).json({ message: 'No Business Data Available!' });
+
+    }else{
+
+      res.status(200).json({
+        message: 'Business Data',
+        data: data,
+      });
+
+    }
+
+
+
+  })
+
+
+}

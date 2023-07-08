@@ -2,7 +2,7 @@ const db = require('../database/db');
 
 exports.selectAll = (req, res) => {
   const page = req.query.page || 1;
-  const limit = req.query.limit || 10; 
+  const limit = req.query.limit || 2; 
 
   const offset = (page - 1) * limit;
 

@@ -78,37 +78,55 @@ exports.searchBar=(req, res)=>{
 
 exports.filter=(req,res)=>{
 
-  const filterParams = {
-    shipping: req.body['shipping'],
-    bill: req.body['bill'],
-    physical_store: req.body['physical_store'],
-    online_store: req.body['online_store'],
-    category: req.body['category'],
-    subcategory: req.body['subcategory'],
-    is_owner_verified: req.body['is_owner_verified']
-  };
+ const shipping = req.body['shipping']
+ const bill = req.body['bill']
+ const physical_store = req.body['physical_store']
+ const online_store = req.body['online_store']
+ const category = req.body['category']
+ const subcategory = req.body['subcategory']
+ const is_owner_verified = req.body['is_owner_verified']
+
+  // const filterParams = {
+  //   shipping: req.body['shipping'],
+  //   bill: req.body['bill'],
+  //   physical_store: req.body['physical_store'],
+  //   online_store: req.body['online_store'],
+  //   category: req.body['category'],
+  //   subcategory: req.body['subcategory'],
+  //   is_owner_verified: req.body['is_owner_verified']
+  // };
   
   let filterQuery = `SELECT n.*, GROUP_CONCAT(i.image_url) AS image_urls, l.logo_url
   FROM negocio n
   JOIN images i ON n.id_business = i.id_business
-  JOIN logos l ON n.id_business = l.id_business`;
-    const values = [];
-    let whereClause = false;
+  JOIN logos l ON n.id_business = l.id_business
+  WHERE n.shipping = ${shipping}
+  AND n.physical_store = ${physical_store}
+  AND n.online_store = ${online_store}
+  AND n.is_owner_verified = ${is_owner_verified}
+  AND n.subcategory = '${subcategory}'
+  AND n.category = '${category}'
+  AND n.bill = ${bill}
+  GROUP BY n.id_business`;
 
-    Object.entries(filterParams).forEach(([key, value]) => {
-      if (value) {
-        if (!whereClause) {
-          filterQuery += ' WHERE';
-          whereClause = true;
-        } else {
-          filterQuery += ' AND';
-        }
-        filterQuery += ` ${key} = '${value}'`;
-        values.push(value);
+    // const values = [];
+    // ```online_store``category``subcategory``is_owner_verified``bill`
+    // let whereClause = false;
+
+    // Object.entries(filterParams).forEach(([key, value]) => {
+    //   if (value) {
+    //     if (!whereClause) {
+    //       filterQuery += ' WHERE';
+    //       whereClause = true;
+    //     } else {
+    //       filterQuery += ' AND';
+    //     }
+    //     filterQuery += ` ${key} = '${value}'`;
+    //     values.push(value);
 
      
-      }
-    });
+    //   }
+    // });
  
   db.query(filterQuery,(err, data)=>{
 

@@ -13,7 +13,7 @@ exports.selectAll = (req, res) => {
     FROM negocio
     LEFT JOIN images ON negocio.id_business = images.id_business
     LEFT JOIN logos ON negocio.id_business = logos.id_business
-    GROUP BY negocio.id_business
+    GROUP BY negocio.id_business, logos.logo_url
     LIMIT ${limit}
     OFFSET ${offset}
   `; 

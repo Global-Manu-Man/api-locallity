@@ -76,7 +76,11 @@ exports.searchBar=(req, res)=>{
 
 }
 
-exports.filter=(req,res)=>{
+exports.filter = (req, res) => {
+  let filterQuery = `SELECT n.*, GROUP_CONCAT(i.image_url) AS image_urls, l.logo_url
+    FROM negocio n
+    JOIN images i ON n.id_business = i.id_business
+    JOIN logos l ON n.id_business = l.id_business`;
 
   const filterParams = {
     shipping: req.body['shipping'],
@@ -87,49 +91,35 @@ exports.filter=(req,res)=>{
     subcategory: req.body['subcategory'],
     is_owner_verified: req.body['is_owner_verified']
   };
-  
-  let filterQuery = `SELECT n.*, GROUP_CONCAT(i.image_url) AS image_urls, l.logo_url
-  FROM negocio n
-  JOIN images i ON n.id_business = i.id_business
-  JOIN logos l ON n.id_business = l.id_business`;
-    const values = [];
-    let whereClause = false;
 
-    Object.entries(filterParams).forEach(([key, value]) => {
-      if (value) {
-        if (!whereClause) {
-          filterQuery += ' WHERE';
-          whereClause = true;
-        } else {
-          filterQuery += ' AND';
-        }
-        filterQuery += ` ${key} = '${value}'`;
-        values.push(value);
+  const values = [];
+  let whereClause = false;
 
-     
+  Object.entries(filterParams).forEach(([key, value]) => {
+    if (value !== undefined && value !== '') {
+      if (!whereClause) {
+        filterQuery += ' WHERE';
+        whereClause = true;
+      } else {
+        filterQuery += ' AND';
       }
-    });
- 
-  db.query(filterQuery,(err, data)=>{
+      filterQuery += ` ${key} = ?`;
+      values.push(value);
+    }
+  });
 
-    if(err){
+  filterQuery += ' GROUP BY n.id_business';
 
+  db.query(filterQuery, values, (err, data) => {
+    if (err) {
       res.status(500).json({ message: 'Failed to retrieve data', error: err });
-
-    }else if(data.length === 0){
-
+    } else if (data.length === 0) {
       res.status(404).json({ message: 'No Business Data Available!' });
-
-    }else{
-
+    } else {
       res.status(200).json({
         message: 'Filter Business Data',
         data: data,
       });
-
     }
-
-
-  })
-
-}
+  });
+};

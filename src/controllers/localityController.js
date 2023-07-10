@@ -18,18 +18,13 @@ exports.create=(request,response)=>{
    const manager = request.body['manager'];
    const description = request.body['description'];
    const capacity_people = request.body['capacity_people'];
-   const address_1 = request.body['address_1'];
-   const address_2 = request.body['address_2'];
-   const address_3 = request.body['address_3'];
    const city = request.body['city'];
    const state = request.body['state'];
    const country = request.body['country'];
    const postal_code = request.body['postal_code'];
    const email = request.body['email'];
    const cell_phone_number = request.body['cell_phone_number'];
-   const publication_likes = request.body['publication_likes'];
    const questions = request.body['questions'];
-   const policies_terms = request.body['policies_terms'];
    const delivery = request.body['delivery'];
    const shipping = request.body['shipping'];
    const bill  = request.body['bill'];
@@ -58,7 +53,7 @@ exports.create=(request,response)=>{
    const created_at = now.toISOString().slice(0, 19).replace('T', ' ');
 
 
-const sql = `INSERT INTO negocio(id_business, schedule, name, price, manager, description, address_1, address_2, address_3, city, state, country, postal_code, delivery, shipping, bill, antiquity, email, physical_store, online_store, url_google, business_age, municipality, cell_phone_number, business_days, category, subcategory, discount_code, publication_likes, questions,policies_terms, accepts_credit_cards, is_owner_verified, social_networks, status, start_date, end_date) VALUES ("${business_id}",'${schedule}','${name}','${price}','${manager}','${description}','${address_1}','${address_2}','${address_3}','${city}','${state}','${country}','${postal_code}','${delivery}','${shipping}','${bill}','${antiquity}','${email}','${physical_store}','${online_store}','${url_google}','${business_age}','${municipality}','${cell_phone_number}','${business_days}','${category}','${subcategory}','${discount_code}','${publication_likes}','${questions}','${policies_terms}','${accepts_credit_cards}','${is_owner_verified}','${social_networks}','${status}','${start_date}','${end_date}')`
+const sql = `INSERT INTO negocio(id_business, schedule, name, price, manager, description, city, state, country, postal_code, delivery, shipping, bill, antiquity, email, physical_store, online_store, url_google, business_age, municipality, cell_phone_number, business_days, category, subcategory, discount_code, questions,accepts_credit_cards, is_owner_verified, social_networks, status, start_date, end_date) VALUES ("${business_id}",'${schedule}','${name}','${price}','${manager}','${description}','${city}','${state}','${country}','${postal_code}','${delivery}','${shipping}','${bill}','${antiquity}','${email}','${physical_store}','${online_store}','${url_google}','${business_age}','${municipality}','${cell_phone_number}','${business_days}','${category}','${subcategory}','${discount_code}','${questions}','${accepts_credit_cards}','${is_owner_verified}','${social_networks}','${status}','${start_date}','${end_date}')`
 
    db.query(sql, (err,data)=>{
 
@@ -223,18 +218,13 @@ exports.UpdateData=(req,res)=>{
                 const manager = req.body['manager'];
                 const description = req.body['description'];
                 const capacity_people = req.body['capacity_people'];
-                const address_1 = req.body['address_1'];
-                const address_2 = req.body['address_2'];
-                const address_3 = req.body['address_3'];
                 const city = req.body['city'];
                 const state = req.body['state'];
                 const country = req.body['country'];
                 const postal_code = req.body['postal_code'];
                 const email = req.body['email'];
                 const cell_phone_number = req.body['cell_phone_number'];
-                const publication_likes = req.body['publication_likes'];
                 const questions = req.body['questions'];
-                const policies_terms = req.body['policies_terms'];
                 const delivery = req.body['delivery'];
                 const shipping = req.body['shipping'];
                 const bill  = req.body['bill'];
@@ -267,9 +257,6 @@ exports.UpdateData=(req,res)=>{
                                          price='${price}',
                                          manager='${manager}',
                                          description='${description}',
-                                         address_1='${address_1}',
-                                         address_2='${address_2}',
-                                         address_3='${address_3}',
                                          city='${city}',
                                          state='${state}',
                                          country='${country}',
@@ -289,9 +276,7 @@ exports.UpdateData=(req,res)=>{
                                          category='${category}',
                                          subcategory='${subcategory}',
                                          discount_code='${discount_code}',
-                                         publication_likes='${publication_likes}',
                                          questions='${questions}',
-                                         policies_terms='${policies_terms}',
                                          accepts_credit_cards='${accepts_credit_cards}',
                                          is_owner_verified='${is_owner_verified}',
                                          social_networks='${social_networks}',

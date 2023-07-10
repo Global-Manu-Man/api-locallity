@@ -75,3 +75,61 @@ exports.searchBar=(req, res)=>{
 
 
 }
+
+exports.filter=(req,res)=>{
+
+  const filterParams = {
+    shipping: req.body['shipping'],
+    bill: req.body['bill'],
+    physical_store: req.body['physical_store'],
+    online_store: req.body['online_store'],
+    category: req.body['category'],
+    subcategory: req.body['subcategory'],
+    is_owner_verified: req.body['is_owner_verified']
+  };
+  
+  let filterQuery = `SELECT n.*, GROUP_CONCAT(i.image_url) AS image_urls, l.logo_url
+  FROM negocio n
+  JOIN images i ON n.id_business = i.id_business
+  JOIN logos l ON n.id_business = l.id_business`;
+    const values = [];
+    let whereClause = false;
+
+    Object.entries(filterParams).forEach(([key, value]) => {
+      if (value) {
+        if (!whereClause) {
+          filterQuery += ' WHERE';
+          whereClause = true;
+        } else {
+          filterQuery += ' AND';
+        }
+        filterQuery += ` ${key} = '${value}'`;
+        values.push(value);
+
+     
+      }
+    });
+ 
+  db.query(filterQuery,(err, data)=>{
+
+    if(err){
+
+      res.status(500).json({ message: 'Failed to retrieve data', error: err });
+
+    }else if(data.length === 0){
+
+      res.status(404).json({ message: 'No Business Data Available!' });
+
+    }else{
+
+      res.status(200).json({
+        message: 'Filter Business Data',
+        data: data,
+      });
+
+    }
+
+
+  })
+
+}

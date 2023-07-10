@@ -17,6 +17,7 @@ router.get("/locality/logoDeleteOne/:id",localityController.deleteSingleLogo);
 // filtering
 router.get("/selectAll",filterController.selectAll);
 router.post("/searchbar",filterController.searchBar);
+router.post("/filter",filterController.filter);
 
 //discount 
 router.post("/discount",discountController.createCode)

@@ -85,6 +85,9 @@ exports.filter=(req,res)=>{
  const category = req.body['category']
  const subcategory = req.body['subcategory']
  const is_owner_verified = req.body['is_owner_verified']
+ const page = req.query.page || 1;
+ const limit = req.query.limit || 10; 
+ const offset = (page - 1) * limit;
 
   // const filterParams = {
   //   shipping: req.body['shipping'],
@@ -95,7 +98,47 @@ exports.filter=(req,res)=>{
   //   subcategory: req.body['subcategory'],
   //   is_owner_verified: req.body['is_owner_verified']
   // };
-  
+  const countQuery = 'SELECT COUNT(*) AS total_count FROM negocio';
+ 
+
+
+    db.query(countQuery, (countErr, countResult) => {
+
+      const totalCount = countResult[0].total_count; 
+
+      if (countErr) {
+        return res.status(500).json({ message: 'Failed to retrieve data count', error: countErr });
+      }
+
+      if(totalCount > 0){
+
+        db.query(filterQuery,(err, data)=>{
+
+          if(err){
+      
+            res.status(500).json({ message: 'Failed to retrieve data', error: err });
+      
+          }else if(data.length === 0){
+      
+            res.status(404).json({ message: 'No Business Data Available!' });
+      
+          }else{
+      
+            res.status(200).json({
+              message: 'Filter Business Data',
+              data: data,
+              page: page,
+              limit: limit,
+              total_count: totalCount
+            });
+      
+          }
+      
+      
+        })
+      }
+
+    })
   let filterQuery = `SELECT n.*, GROUP_CONCAT(i.image_url) AS image_urls, l.logo_url
   FROM negocio n
   JOIN images i ON n.id_business = i.id_business
@@ -107,7 +150,11 @@ exports.filter=(req,res)=>{
   AND n.subcategory = '${subcategory}'
   AND n.category = '${category}'
   AND n.bill = ${bill}
-  GROUP BY n.id_business`;
+  GROUP BY n.id_business
+  LIMIT ${limit}
+  OFFSET ${offset}
+  `;
+
 
     // const values = [];
     // ```online_store``category``subcategory``is_owner_verified``bill`
@@ -128,26 +175,6 @@ exports.filter=(req,res)=>{
     //   }
     // });
  
-  db.query(filterQuery,(err, data)=>{
 
-    if(err){
-
-      res.status(500).json({ message: 'Failed to retrieve data', error: err });
-
-    }else if(data.length === 0){
-
-      res.status(404).json({ message: 'No Business Data Available!' });
-
-    }else{
-
-      res.status(200).json({
-        message: 'Filter Business Data',
-        data: data,
-      });
-
-    }
-
-
-  })
 
 }

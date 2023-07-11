@@ -44,6 +44,10 @@ exports.create=(request,response)=>{
    const end_date = request.body['end_date'];
    const status = request.body['status'];
    const social_networks = request.body['social_networks'];
+   const startDate = new Date(start_date);
+   const endDate = new Date(end_date);
+   const startTime = startDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+   const endTime = endDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
    const now = new Date();
    const created_at = now.toISOString().slice(0, 19).replace('T', ' ');
 

@@ -76,84 +76,78 @@ exports.searchBar=(req, res)=>{
 
 }
 
-exports.filter = (req, res) => {
-  const shipping = req.body['shipping'];
-  const bill = req.body['bill'];
-  const physical_store = req.body['physical_store'];
-  const online_store = req.body['online_store'];
-  const category = req.body['category'];
-  const subcategory = req.body['subcategory'];
-  const is_owner_verified = req.body['is_owner_verified'];
-  const page = req.body['page'];
-  const limit = req.body['limit'];
-  const totalCount = req.body['total_count'];
+exports.filter=(req,res)=>{
 
+ const shipping = req.body['shipping']
+ const bill = req.body['bill']
+ const physical_store = req.body['physical_store']
+ const online_store = req.body['online_store']
+ const category = req.body['category']
+ const subcategory = req.body['subcategory']
+ const is_owner_verified = req.body['is_owner_verified']
+
+  // const filterParams = {
+  //   shipping: req.body['shipping'],
+  //   bill: req.body['bill'],
+  //   physical_store: req.body['physical_store'],
+  //   online_store: req.body['online_store'],
+  //   category: req.body['category'],
+  //   subcategory: req.body['subcategory'],
+  //   is_owner_verified: req.body['is_owner_verified']
+  // };
+  
   let filterQuery = `SELECT n.*, GROUP_CONCAT(i.image_url) AS image_urls, l.logo_url
-    FROM negocio n
-    JOIN images i ON n.id_business = i.id_business
-    JOIN logos l ON n.id_business = l.id_business
-    WHERE 1 = 1`;
+  FROM negocio n
+  JOIN images i ON n.id_business = i.id_business
+  JOIN logos l ON n.id_business = l.id_business
+  WHERE n.shipping = ${shipping}
+  AND n.physical_store = ${physical_store}
+  AND n.online_store = ${online_store}
+  AND n.is_owner_verified = ${is_owner_verified}
+  AND n.subcategory = '${subcategory}'
+  AND n.category = '${category}'
+  AND n.bill = ${bill}
+  GROUP BY n.id_business`;
 
-  const values = [];
+    // const values = [];
+    // ```online_store``category``subcategory``is_owner_verified``bill`
+    // let whereClause = false;
 
-  if (shipping !== undefined) {
-    filterQuery += ` AND n.shipping = ?`;
-    values.push(shipping);
-  }
+    // Object.entries(filterParams).forEach(([key, value]) => {
+    //   if (value) {
+    //     if (!whereClause) {
+    //       filterQuery += ' WHERE';
+    //       whereClause = true;
+    //     } else {
+    //       filterQuery += ' AND';
+    //     }
+    //     filterQuery += ` ${key} = '${value}'`;
+    //     values.push(value);
 
-  if (physical_store !== undefined) {
-    filterQuery += ` AND (n.physical_store IS NULL OR n.physical_store = ?)`;
-    values.push(physical_store);
-  }
+     
+    //   }
+    // });
+ 
+  db.query(filterQuery,(err, data)=>{
 
-  if (online_store !== undefined) {
-    filterQuery += ` AND (n.online_store IS NULL OR n.online_store = ?)`;
-    values.push(online_store);
-  }
+    if(err){
 
-  if (is_owner_verified !== undefined) {
-    filterQuery += ` AND (n.is_owner_verified IS NULL OR n.is_owner_verified = ?)`;
-    values.push(is_owner_verified);
-  }
-
-  if (subcategory !== undefined) {
-    filterQuery += ` AND (n.subcategory = ? OR n.subcategory IS NULL)`;
-    values.push(subcategory);
-  }
-
-  if (category !== undefined) {
-    filterQuery += ` AND (n.category = ? OR n.category IS NULL)`;
-    values.push(category);
-  }
-
-  if (bill !== undefined) {
-    filterQuery += ` AND (n.bill IS NULL OR n.bill = ?)`;
-    values.push(bill);
-  }
-
-  filterQuery += ` GROUP BY n.id_business`;
-
-  // Aplicar paginación
-  if (page !== undefined && limit !== undefined) {
-    const offset = (page - 1) * limit;
-    filterQuery += ` LIMIT ? OFFSET ?`;
-    values.push(limit, offset);
-  }
-
-  db.query(filterQuery, values, (err, data) => {
-    if (err) {
       res.status(500).json({ message: 'Failed to retrieve data', error: err });
-    } else if (data.length === 0) {
+
+    }else if(data.length === 0){
+
       res.status(404).json({ message: 'No Business Data Available!' });
-    } else {
-      const response = {
+
+    }else{
+
+      res.status(200).json({
         message: 'Filter Business Data',
         data: data,
-        page: page,
-        limit: limit,
-        total_count: totalCount
-      };
-      res.status(200).json(response);
+      });
+
     }
-  });
-};
+
+
+  })
+
+}

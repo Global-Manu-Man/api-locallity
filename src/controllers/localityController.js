@@ -48,12 +48,11 @@ exports.create=(request,response)=>{
    const endDate = new Date(end_date);
    const startTime = startDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
    const endTime = endDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
-   const schedule = startTime+"-"+endTime;
    const now = new Date();
    const created_at = now.toISOString().slice(0, 19).replace('T', ' ');
 
 
-const sql = `INSERT INTO negocio(id_business, schedule, name, price, manager, description, city, state, country, postal_code, delivery, shipping, bill, antiquity, email, physical_store, online_store, url_google, business_age, municipality, cell_phone_number, business_days, category, subcategory, discount_code, questions,accepts_credit_cards, is_owner_verified, social_networks, status, start_date, end_date) VALUES ("${business_id}",'${schedule}','${name}','${price}','${manager}','${description}','${city}','${state}','${country}','${postal_code}','${delivery}','${shipping}','${bill}','${antiquity}','${email}','${physical_store}','${online_store}','${url_google}','${business_age}','${municipality}','${cell_phone_number}','${business_days}','${category}','${subcategory}','${discount_code}','${questions}','${accepts_credit_cards}','${is_owner_verified}','${social_networks}','${status}','${start_date}','${end_date}')`
+const sql = `INSERT INTO negocio(id_business, name, price, manager, description, city, state, country, postal_code, delivery, shipping, bill, antiquity, email, physical_store, online_store, url_google, business_age, municipality, cell_phone_number, business_days, category, subcategory, discount_code, questions,accepts_credit_cards, is_owner_verified, social_networks, status, start_date, end_date) VALUES ("${business_id}",'${name}','${price}','${manager}','${description}','${city}','${state}','${country}','${postal_code}','${delivery}','${shipping}','${bill}','${antiquity}','${email}','${physical_store}','${online_store}','${url_google}','${business_age}','${municipality}','${cell_phone_number}','${business_days}','${category}','${subcategory}','${discount_code}','${questions}','${accepts_credit_cards}','${is_owner_verified}','${social_networks}','${status}','${start_date}','${end_date}')`
 
    db.query(sql, (err,data)=>{
 

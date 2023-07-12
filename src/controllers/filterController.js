@@ -86,8 +86,8 @@ exports.filter = (req, res) => {
   const category = req.body['category'];
   const subcategory = req.body['subcategory'];
   const is_owner_verified = req.body['is_owner_verified'];
-  const page = req.body['page'];
-  const limit = req.body['limit'];
+  const page = req.body['page'] || 1;
+  const limit = req.body['limit'] || 100;
 
 
   let filterQuery = `SELECT n.*, GROUP_CONCAT(i.image_url) AS image_urls, l.logo_url
@@ -138,8 +138,9 @@ exports.filter = (req, res) => {
   // Aplicar paginación
   if (page !== undefined && limit !== undefined) {
     const offset = (page - 1) * limit
-    filterQuery +='  LIMIT ? OFFSET ?'
-    values.push(limit, offset)
+    // console.log(offset);
+    filterQuery +=` LIMIT ${limit} OFFSET ${offset}`   
+    // values.push(limit, offset)
   }
 
   db.query(filterQuery, values, (err, data) => {

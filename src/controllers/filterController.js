@@ -1,9 +1,11 @@
 const db = require('../database/db');
 
 exports.selectAll = (req, res) => {
+  
   const page = req.query.page || 1;
   const limit = req.query.limit || 10; 
 
+  console.log(req.query)
   const offset = (page - 1) * limit;
 
   const countQuery = 'SELECT COUNT(*) AS total_count FROM negocio'; // Query to get the total count of records
@@ -84,10 +86,9 @@ exports.filter = (req, res) => {
   const category = req.body['category'];
   const subcategory = req.body['subcategory'];
   const is_owner_verified = req.body['is_owner_verified'];
-  // const page = req.body['page'];
-  // const limit = req.body['limit'];
-  const page = req.query.page || 1;
-  const limit = req.query.limit || 10; 
+  const page = req.body['page'];
+  const limit = req.body['limit'];
+
 
   let filterQuery = `SELECT n.*, GROUP_CONCAT(i.image_url) AS image_urls, l.logo_url
     FROM negocio n
